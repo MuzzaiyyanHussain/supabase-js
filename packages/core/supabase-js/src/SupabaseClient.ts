@@ -45,13 +45,12 @@ export default class SupabaseClient<
     | { PostgrestVersion: string } = 'public' extends keyof Omit<Database, '__InternalSupabase'>
     ? 'public'
     : string & keyof Omit<Database, '__InternalSupabase'>,
-  SchemaName extends string &
-    keyof Omit<Database, '__InternalSupabase'> = SchemaNameOrClientOptions extends string &
-    keyof Omit<Database, '__InternalSupabase'>
-    ? SchemaNameOrClientOptions
-    : 'public' extends keyof Omit<Database, '__InternalSupabase'>
-      ? 'public'
-      : string & keyof Omit<Omit<Database, '__InternalSupabase'>, '__InternalSupabase'>,
+  SchemaName extends string & keyof Omit<Database, '__InternalSupabase'> =
+    SchemaNameOrClientOptions extends string & keyof Omit<Database, '__InternalSupabase'>
+      ? SchemaNameOrClientOptions
+      : 'public' extends keyof Omit<Database, '__InternalSupabase'>
+        ? 'public'
+        : string & keyof Omit<Omit<Database, '__InternalSupabase'>, '__InternalSupabase'>,
   Schema extends Omit<Database, '__InternalSupabase'>[SchemaName] extends GenericSchema
     ? Omit<Database, '__InternalSupabase'>[SchemaName]
     : never = Omit<Database, '__InternalSupabase'>[SchemaName] extends GenericSchema
@@ -433,11 +432,8 @@ export default class SupabaseClient<
   rpc<
     FnName extends string & keyof Schema['Functions'],
     Args extends Schema['Functions'][FnName]['Args'] = never,
-    FilterBuilder extends GetRpcFunctionFilterBuilderByArgs<
-      Schema,
-      FnName,
-      Args
-    > = GetRpcFunctionFilterBuilderByArgs<Schema, FnName, Args>,
+    FilterBuilder extends GetRpcFunctionFilterBuilderByArgs<Schema, FnName, Args> =
+      GetRpcFunctionFilterBuilderByArgs<Schema, FnName, Args>,
   >(
     fn: FnName,
     args: Args = {} as Args,
@@ -555,6 +551,7 @@ export default class SupabaseClient<
       debug,
       throwOnError,
       experimental,
+      lockAcquireTimeout,
     }: SupabaseAuthClientOptions,
     headers?: Record<string, string>,
     fetch?: Fetch
@@ -578,6 +575,7 @@ export default class SupabaseClient<
       throwOnError,
       experimental,
       fetch,
+      lockAcquireTimeout,
       // auth checks if there is a custom authorizaiton header using this flag
       // so it knows whether to return an error when getUser is called with no session
       hasCustomAuthorizationHeader: Object.keys(this.headers).some(
